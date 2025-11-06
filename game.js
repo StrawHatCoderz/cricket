@@ -301,7 +301,7 @@ function shotOutcome(distance, angle) {
 
   if (isDeepInside(distance, boundaryRadius)) {
     const runPool = [SINGLE, DOUBLE, DOUBLE, TRIPLE];
-    getRun(runPool);
+    return getRun(runPool);
   }
 
   if (isNearBoundary(distance, boundaryRadius)) {
