@@ -2,7 +2,6 @@ const WIN_STATUS = 'win';
 const LOSS_STATUS = 'loss';
 const ON_GOING_STATUS = 'match going';
 
-const WICKET = 'W';
 const GROUND_RADIUS = 12;
 
 const LEFT_SIDE = 'l';
@@ -16,6 +15,7 @@ const DOUBLE = 2;
 const TRIPLE = 3;
 const BOUNDARY = 4;
 const MAXIMUM = 6;
+const WICKET = 'W';
 
 const FIELDER = '🏃🏻‍♂️';
 const OUTER_BOUNDARY = '🔴';
