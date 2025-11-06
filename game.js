@@ -313,7 +313,7 @@ function shotOutcome(distance, angle) {
 
 const getAngleForShot = function (shot) {
   if (shot === LEFT_SIDE) {
-    const part = Math.random() < 0.5;
+    const part = chance(0.5);
     return part ? randomInRange([315, 360]) : randomInRange([0, 45]); 
   }
   if (shot === RIGHT_SIDE) return randomInRange([135, 225]);
