@@ -2,8 +2,6 @@ const WIN_STATUS = 'win';
 const LOSS_STATUS = 'loss';
 const ON_GOING_STATUS = 'match going';
 
-const GROUND_RADIUS = 12;
-
 const LEFT_SIDE = 'l';
 const RIGHT_SIDE = 'r';
 const BACK_SIDE = 'b';
@@ -40,6 +38,10 @@ const FIELDERS = [
   [-10, 175]
 ];
 
+// [width, height, innerRadius, boundaryRadius]
+const GROUND_DIMENSIONS = [25, 25, 6, 11];
+const GROUND_RADIUS = 12;
+
 // Helper functions
 const delay = (ms = 150000000) => {
   for (let i = 1; i <= ms; i++) { }
@@ -67,13 +69,6 @@ const randomInRange = range => {
 const chance = probability => Math.random() < probability;
 
 // UI functions (ground, animation, feedback messgaes)
-
-const getGroundDimensions = (width = 25, height = 25) => {
-  const boundaryRadius = Math.floor(width * 0.45);
-  const innerRadius = Math.floor(width * 0.25);
-
-  return [width, height, innerRadius, boundaryRadius];
-}
 
 const endGame = (target, currScore) => {
   const status = 'DEFEAT!';
@@ -144,9 +139,9 @@ const getGameStatus = (target, currScore, maxBatsmen, wicketsLoss) => {
 }
 
 const placeFielders = (grid, centerX, centerY) => {
-  for (let filder = 0; filder < FIELDERS.length; filder++) {
-    const dist = FIELDERS[filder][0];
-    const angle = FIELDERS[filder][1] * (Math.PI / 180);
+  for (const fielder of FIELDERS) {
+    const dist = fielder[0];
+    const angle = fielder[1] * (Math.PI / 180);
 
     const filderX = Math.round(centerX + dist * Math.cos(angle));
     const filderY = Math.round(centerY + dist * Math.sin(angle));
@@ -155,7 +150,7 @@ const placeFielders = (grid, centerX, centerY) => {
       grid[filderY][filderX] = FIELDER;
     }
   }
-}
+};
 
 const addPitch = (grid, centerX, centerY) => {
   const pitchHalf = 2;
@@ -166,11 +161,10 @@ const addPitch = (grid, centerX, centerY) => {
 
 const createGround = () => {
   const grid = [];
-  const groundDimensions = getGroundDimensions();
-  const width = groundDimensions[0];
-  const height = groundDimensions[1];
-  const innerRadius = groundDimensions[2];
-  const boundaryRadius = groundDimensions[3];
+  const width = GROUND_DIMENSIONS[0];
+  const height = GROUND_DIMENSIONS[1];
+  const innerRadius = GROUND_DIMENSIONS[2];
+  const boundaryRadius = GROUND_DIMENSIONS[3];
   const center = centerCoords(width, height);
 
   for (let heightUnit = 0; heightUnit < height; heightUnit++) {
@@ -226,26 +220,15 @@ const displayGround = () => {
 
 // Functions to get result for ball delivery
 
-const getRun = runPool => {
-  const run = randomInRange([0, runPool.length]);
-  return runPool[run];
-}
+const getRun = runPool => runPool[randomInRange([0, runPool.length - 1])];
 
-const isShortRun = (distance, innerRadius) => {
-  return distance < innerRadius / 2;
-}
+const isShortRun = (distance, innerRadius) => distance < innerRadius / 2;
 
-const isInnerCircle = (distance, innerRadius) => {
-  return distance < innerRadius;
-}
+const isInnerCircle = (distance, innerRadius) => distance < innerRadius;
 
-const isDeepInside = (distance, boundaryRadius) => {
-  return distance < boundaryRadius - 2;
-}
+const isDeepInside = (distance, boundaryRadius) => distance < boundaryRadius - 2;
 
-const isNearBoundary = (distance, boundaryRadius) => {
-  return distance < boundaryRadius;
-}
+const isNearBoundary = (distance, boundaryRadius) => distance < boundaryRadius;
 
 const isValidShot = (shotChoice, validShots) =>
   shotChoice && validShots.includes(shotChoice.toLowerCase());
@@ -259,24 +242,18 @@ const isCaught = (distance, angle, fielders) =>
 
 // score updation
 
-const updateScore = (score, wickets, result) => {
-  if (result === WICKET) return [score, wickets + 1];
-  return [score + result, wickets];
-}
+const updateScore = (score, wickets, result) =>
+  result === WICKET ? [score, wickets + 1] : [score + result, wickets];
 
 // functions to determine shot based on user input
 
 const shotOutcome = (distance, angle) => {
-  if (isCaught(distance, angle, FIELDERS)) {
-    return WICKET;
-  }
+  if (isCaught(distance, angle, FIELDERS)) return WICKET;
 
-  const groundDimensions = getGroundDimensions();
-  const innerRadius = groundDimensions[2];
-  const boundaryRadius = groundDimensions[3];
-  if (isShortRun(distance, innerRadius)) {
-    return chance(0.20) ? WICKET : DOT;
-  }
+  const innerRadius = GROUND_DIMENSIONS[2];
+  const boundaryRadius = GROUND_DIMENSIONS[3];
+
+  if (isShortRun(distance, innerRadius)) return chance(0.20) ? WICKET : DOT;
 
   if (isInnerCircle(distance, innerRadius)) {
     const runPool = [SINGLE, SINGLE, SINGLE, DOUBLE, DOUBLE];
@@ -305,16 +282,9 @@ const getAngleForShot = shot => {
   return randomInRange([45, 135]);
 }
 
-const getDistanceForShot = () => {
-  const maxDistanceRange = GROUND_RADIUS + 5;
-  return randomInRange([0, maxDistanceRange]);
-}
+const getDistanceForShot = () => randomInRange([0, GROUND_RADIUS + 5]); // extra 5 for maxium
 
-const getShotCoordinates = shot => {
-  const distance = getDistanceForShot();
-  const angle = getAngleForShot(shot);
-  return [distance, angle];
-}
+const getShotCoordinates = shot => [getDistanceForShot(), getAngleForShot(shot)];
 
 const determineOutcome = shot => {
   const coords = getShotCoordinates(shot);
@@ -334,9 +304,7 @@ const chooseShot = () => {
       'S: Straight (Frontfoot)\n'
     );
 
-    if (isValidShot(shotChoice, validShots)) {
-      return shotChoice.toLowerCase();
-    }
+    if (isValidShot(shotChoice, validShots)) return shotChoice.toLowerCase();
 
     console.log("Invalid shot! Please try again.\n");
   }
@@ -344,10 +312,7 @@ const chooseShot = () => {
 
 // main functions
 
-const playDelivery = () => {
-  const userShot = chooseShot();
-  return determineOutcome(userShot);
-}
+const playDelivery = () => determineOutcome(chooseShot());
 
 const game = (mode, target, maxBatsmen) => {
   let currScore = 0;
@@ -398,11 +363,8 @@ const initGame = (mode = 'easy') => {
   const runsScored = result[1];
   const wicketsLoss = result[2];
 
-  if (status === WIN_STATUS) {
-    displayWinMessage(maxBatsmen, wicketsLoss);
-  } else {
-    endGame(target, runsScored);
-  }
+  if (status === WIN_STATUS) displayWinMessage(maxBatsmen, wicketsLoss);
+  else endGame(target, runsScored);
 }
 
 initGame();
