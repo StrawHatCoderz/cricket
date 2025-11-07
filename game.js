@@ -18,7 +18,7 @@ const MAXIMUM = 6;
 const WICKET = 'W';
 
 const FIELDER = '🏃🏻‍♂️';
-const OUTER_BOUNDARY = '🔴';
+const OUTER_BOUNDARY = '🟠';
 const INNER_BOUNDARY = '⚪';
 const GRASS = '🟢';
 const PITCH = '⬜️';
@@ -41,12 +41,16 @@ const FIELDERS = [
 ];
 
 // Helper functions
-function delay(loopCount = 150000000) {
-  for (let i = 0; i < loopCount; i++) {}
+function delay(ms = 150000000) {
+  for (let i = 1; i <= ms; i++) {}
 }
 
 const sqr = function (x) {
   return x * x;
+}
+
+const batsmenPosition = function (centerX, centerY) {
+  return [centerX - 2, centerY];
 }
 
 const centerCoords = function (width, height) {
@@ -177,14 +181,14 @@ const createGround = function () {
   const boundaryRadius = groundDimensions[3];
   const center = centerCoords(width, height);
   
-  for (let y = 0; y < height; y++) {
+  for (let heightUnit = 0; heightUnit < height; heightUnit++) {
     const row = [];
-    for (let x = 0; x < width; x++) {
-      const point = [x, y];
+    for (let widthUnit = 0; widthUnit < width; widthUnit++) {
+      const point = [widthUnit, heightUnit];
       const d = distanceBetween(point, center);
 
-      if (Math.abs(d - boundaryRadius) < 1) row.push(OUTER_BOUNDARY);
-      else if (Math.abs(d - innerRadius) < 1) row.push(INNER_BOUNDARY);
+      if (Math.abs(d - boundaryRadius) < 0.5) row.push(OUTER_BOUNDARY);
+      else if (Math.abs(d - innerRadius) < 0.5) row.push(INNER_BOUNDARY);
       else if (d < boundaryRadius) row.push(GRASS);
       else row.push(EMPTY_GROUND);
     }
