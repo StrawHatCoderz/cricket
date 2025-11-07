@@ -68,21 +68,21 @@ const chance = probability => Math.random() < probability;
 
 // UI functions (ground, animation, feedback messgaes)
 
-const getGroundDimensions = function (width = 25, height = 25) {
+const getGroundDimensions = (width = 25, height = 25) => {
   const boundaryRadius = Math.floor(width * 0.45);
   const innerRadius = Math.floor(width * 0.25);
 
   return [width, height, innerRadius, boundaryRadius];
 }
 
-const endGame = function (target, currScore) {
+const endGame = (target, currScore) => {
   const status = 'DEFEAT!';
   const emoji = '😭';
   const desc = `Target not reached. You were short by ${target - currScore} runs.`;
   console.log(`${emoji} ${status} ${desc}`);
 }
 
-const displayWinMessage = function (maxBatsmen, wicketsLost) {
+const displayWinMessage = (maxBatsmen, wicketsLost) => {
   const status = 'VICTORY!';
   const desc = `You won by ${maxBatsmen - wicketsLost} wickets.`
   const emoji = '🎉'
@@ -90,7 +90,7 @@ const displayWinMessage = function (maxBatsmen, wicketsLost) {
   console.log(`${emoji} ${status} ${desc}`);
 }
 
-const displayFeedBack = function (result, currScore, wicketsLoss, maxBatsmen) {
+const displayFeedBack = (result, currScore, wicketsLoss, maxBatsmen) => {
   const isWicket = result === WICKET;
 
   const message = isWicket
@@ -102,7 +102,7 @@ const displayFeedBack = function (result, currScore, wicketsLoss, maxBatsmen) {
   console.log(`${message}  |  ${scoreLine}  | ${wicketsLine} `);
 }
 
-function animateBall(distance, angle) {
+const animateBall = (distance, angle) => {
   const rad = angle * (Math.PI / 180);
 
   for (let step = 1; step <= distance; step++) {
@@ -126,14 +126,14 @@ function animateBall(distance, angle) {
   }
 }
 
-const displayGameInfo = function (mode, target, currScore, wicketsLoss, maxBatsmen) {
+const displayGameInfo = (mode, target, currScore, wicketsLoss, maxBatsmen) => {
   console.log(`Mode: ${mode.toUpperCase()}`);
   console.log(`Target: ${target}`);
   console.log(`Score: ${currScore}/${wicketsLoss}`);
   console.log(`Wickets Left: ${maxBatsmen - wicketsLoss}\n`);
 }
 
-const getGameStatus = function (target, currScore, maxBatsmen, wicketsLoss) {
+const getGameStatus = (target, currScore, maxBatsmen, wicketsLoss) => {
   const win = currScore >= target;
   const loss = wicketsLoss >= maxBatsmen;
 
@@ -143,7 +143,7 @@ const getGameStatus = function (target, currScore, maxBatsmen, wicketsLoss) {
   return ON_GOING_STATUS;
 }
 
-const placeFielders = function (grid, centerX, centerY) {
+const placeFielders = (grid, centerX, centerY) => {
   for (let filder = 0; filder < FIELDERS.length; filder++) {
     const dist = FIELDERS[filder][0];
     const angle = FIELDERS[filder][1] * (Math.PI / 180);
@@ -157,14 +157,14 @@ const placeFielders = function (grid, centerX, centerY) {
   }
 }
 
-const addPitch = function (grid, centerX, centerY) {
+const addPitch = (grid, centerX, centerY) => {
   const pitchHalf = 2;
   for (let point = -pitchHalf; point <= pitchHalf; point++) {
     grid[centerY + point][centerX] = PITCH;
   }
 }
 
-const createGround = function () {
+const createGround = () => {
   const grid = [];
   const groundDimensions = getGroundDimensions();
   const width = groundDimensions[0];
@@ -190,7 +190,7 @@ const createGround = function () {
   return [grid, center[0], center[1]];
 }
 
-const displayGroundLegend = function () {
+const displayGroundLegend = () => {
   let legend = 'Legend: \n';
   legend += `${OUTER_BOUNDARY} Boundary | `;
   legend += `${INNER_BOUNDARY} Inner Ring | `;
@@ -205,7 +205,7 @@ const renderGrid = grid => {
   grid.forEach(row => console.log(row.join("")));
 };
 
-function buildGround() {
+const buildGround = () => {
   const result = createGround();
   const grid = result[0];
   const centerX = result[1];
@@ -217,7 +217,7 @@ function buildGround() {
   return [grid, centerX, centerY];
 }
 
-function displayGround() {
+const displayGround = () => {
   const grid = buildGround()[0];
 
   renderGrid(grid);
@@ -226,33 +226,33 @@ function displayGround() {
 
 // Functions to get result for ball delivery
 
-const getRun = function (runPool) {
+const getRun = runPool => {
   const run = randomInRange([0, runPool.length]);
   return runPool[run];
 }
 
-const isShortRun = function (distance, innerRadius) {
+const isShortRun = (distance, innerRadius) => {
   return distance < innerRadius / 2;
 }
 
-const isInnerCircle = function (distance, innerRadius) {
+const isInnerCircle = (distance, innerRadius) => {
   return distance < innerRadius;
 }
 
-const isDeepInside = function (distance, boundaryRadius) {
+const isDeepInside = (distance, boundaryRadius) => {
   return distance < boundaryRadius - 2;
 }
 
-const isNearBoundary = function (distance, boundaryRadius) {
+const isNearBoundary = (distance, boundaryRadius) => {
   return distance < boundaryRadius;
 }
 
-const isValidShot = function (shotChoice, validShots) {
+const isValidShot = (shotChoice, validShots) => {
   if (!shotChoice) return false;
   return validShots.includes(shotChoice.toLowerCase());
 }
 
-const isCaught = function (distance, angle, fielders) {
+const isCaught = (distance, angle, fielders) => {
   for (let i = 0; i < fielders.length; i++) {
     const fielderDist = fielders[i][0];
     const fielderAngle = fielders[i][1];
@@ -269,14 +269,14 @@ const isCaught = function (distance, angle, fielders) {
 
 // score updation
 
-const updateScore = function (score, wickets, result) {
+const updateScore = (score, wickets, result) => {
   if (result === WICKET) return [score, wickets + 1];
   return [score + result, wickets];
 }
 
 // functions to determine shot based on user input
 
-function shotOutcome(distance, angle) {
+const shotOutcome = (distance, angle) => {
   if (isCaught(distance, angle, FIELDERS)) {
     return WICKET;
   }
@@ -305,7 +305,7 @@ function shotOutcome(distance, angle) {
   return MAXIMUM;
 }
 
-const getAngleForShot = function (shot) {
+const getAngleForShot = shot => {
   if (shot === LEFT_SIDE) {
     const part = chance(0.5);
     return part ? randomInRange([315, 360]) : randomInRange([0, 45]);
@@ -315,24 +315,24 @@ const getAngleForShot = function (shot) {
   return randomInRange([45, 135]);
 }
 
-const getDistanceForShot = function () {
+const getDistanceForShot = () => {
   const maxDistanceRange = GROUND_RADIUS + 5;
   return randomInRange([0, maxDistanceRange]);
 }
 
-const getShotCoordinates = function (shot) {
+const getShotCoordinates = shot => {
   const distance = getDistanceForShot();
   const angle = getAngleForShot(shot);
   return [distance, angle];
 }
 
-const determineOutcome = function (shot) {
+const determineOutcome = shot => {
   const coords = getShotCoordinates(shot);
   animateBall(coords[0], coords[1]);
   return shotOutcome(coords[0], coords[1]);
 }
 
-const chooseShot = function () {
+const chooseShot = () => {
   const validShots = [LEFT_SIDE, RIGHT_SIDE, BACK_SIDE, STRAIGHT];
 
   while (true) {
@@ -354,12 +354,12 @@ const chooseShot = function () {
 
 // main functions
 
-const playDelivery = function () {
+const playDelivery = () => {
   const userShot = chooseShot();
   return determineOutcome(userShot);
 }
 
-const game = function (mode, target, maxBatsmen) {
+const game = (mode, target, maxBatsmen) => {
   let currScore = 0;
   let wicketsLoss = 0;
   let status = getGameStatus(target, currScore, maxBatsmen, wicketsLoss);
@@ -385,19 +385,19 @@ const game = function (mode, target, maxBatsmen) {
   return [status, currScore, wicketsLoss];
 }
 
-const getMaxBatsmen = function (mode) {
+const getMaxBatsmen = mode => {
   if (mode === 'easy') return 6;
   if (mode === 'medium') return 5;
   return 4;
 }
 
-const getTarget = function (mode) {
+const getTarget = mode => {
   if (mode === 'easy') return randomInRange([15, 20]);
   if (mode === 'medium') return randomInRange([35, 50]);
   return randomInRange([75, 100]);
 }
 
-const initGame = function (mode = 'easy') {
+const initGame = (mode = 'easy') => {
   const target = getTarget(mode);
   const maxBatsmen = getMaxBatsmen(mode);
   displayGameInfo(mode, target, maxBatsmen);
