@@ -247,25 +247,15 @@ const isNearBoundary = (distance, boundaryRadius) => {
   return distance < boundaryRadius;
 }
 
-const isValidShot = (shotChoice, validShots) => {
-  if (!shotChoice) return false;
-  return validShots.includes(shotChoice.toLowerCase());
-}
+const isValidShot = (shotChoice, validShots) =>
+  shotChoice && validShots.includes(shotChoice.toLowerCase());
 
-const isCaught = (distance, angle, fielders) => {
-  for (let i = 0; i < fielders.length; i++) {
-    const fielderDist = fielders[i][0];
-    const fielderAngle = fielders[i][1];
+const isFielderInCatchRange = (fielder, distance, angle) =>
+  Math.abs(distance - fielder[0]) < 2 &&
+  Math.abs(angle - fielder[1]) < 15;
 
-    const distDiff = Math.abs(distance - fielderDist);
-    const angleDiff = Math.abs(angle - fielderAngle);
-
-    if (distDiff < 2 && angleDiff < 15) {
-      return true;
-    }
-  }
-  return false;
-}
+const isCaught = (distance, angle, fielders) =>
+  fielders.some(fielder => isFielderInCatchRange(fielder, distance, angle));
 
 // score updation
 
