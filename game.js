@@ -41,38 +41,30 @@ const FIELDERS = [
 ];
 
 // Helper functions
-function delay(ms = 150000000) {
-  for (let i = 1; i <= ms; i++) {}
+const delay = (ms = 150000000) => {
+  for (let i = 1; i <= ms; i++) { }
 }
 
-const sqr = function (x) {
-  return x * x;
-}
+const sqr = x => x * x;
 
-const batsmenPosition = function (centerX, centerY) {
-  return [centerX - 2, centerY];
-}
+const batsmenPosition = (centerX, centerY) => [centerX - 2, centerY];
 
-const centerCoords = function (width, height) {
+const centerCoords = (width, height) => {
   const abscissa = Math.floor(width / 2);
   const ordinate = Math.floor(height / 2);
 
   return [abscissa, ordinate];
 }
 
-const distanceBetween = function (point1, point2) {
-  return Math.sqrt(sqr(point1[0] - point2[0]) + sqr(point1[1] - point2[1]));
-}
+const distanceBetween = (p1, p2) => Math.sqrt(sqr(p1[0] - p2[0]) + sqr(p1[1] - p2[1]));
 
-const randomInRange = function (range) {
+const randomInRange = range => {
   const min = range[0];
   const max = range[1];
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function chance(probability) {
-  return Math.random() < probability;
-}
+const chance = probability => Math.random() < probability;
 
 // UI functions (ground, animation, feedback messgaes)
 
@@ -98,7 +90,7 @@ const displayWinMessage = function (maxBatsmen, wicketsLost) {
   console.log(`${emoji} ${status} ${desc}`);
 }
 
-const displayFeedBack = function(result, currScore, wicketsLoss, maxBatsmen) {
+const displayFeedBack = function (result, currScore, wicketsLoss, maxBatsmen) {
   const isWicket = result === WICKET;
 
   const message = isWicket
@@ -180,7 +172,7 @@ const createGround = function () {
   const innerRadius = groundDimensions[2];
   const boundaryRadius = groundDimensions[3];
   const center = centerCoords(width, height);
-  
+
   for (let heightUnit = 0; heightUnit < height; heightUnit++) {
     const row = [];
     for (let widthUnit = 0; widthUnit < width; widthUnit++) {
@@ -209,11 +201,9 @@ const displayGroundLegend = function () {
   console.log(legend);
 }
 
-const renderGrid = function (grid) {
-  for (let line = 0; line < grid.length; line++) {
-    console.log(grid[line].join(""));
-  }
-}
+const renderGrid = grid => {
+  grid.forEach(row => console.log(row.join("")));
+};
 
 function buildGround() {
   const result = createGround();
@@ -318,7 +308,7 @@ function shotOutcome(distance, angle) {
 const getAngleForShot = function (shot) {
   if (shot === LEFT_SIDE) {
     const part = chance(0.5);
-    return part ? randomInRange([315, 360]) : randomInRange([0, 45]); 
+    return part ? randomInRange([315, 360]) : randomInRange([0, 45]);
   }
   if (shot === RIGHT_SIDE) return randomInRange([135, 225]);
   if (shot === BACK_SIDE) return randomInRange([225, 315]);
