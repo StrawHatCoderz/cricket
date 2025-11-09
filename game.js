@@ -282,9 +282,28 @@ const getAngleForShot = shot => {
   return randomInRange([45, 135]);
 }
 
-const getDistanceForShot = () => randomInRange([0, GROUND_RADIUS + 5]); // extra 5 for maxium
+const getDistanceForShot = (shot) => {
+  const max = GROUND_RADIUS + 5;
 
-const getShotCoordinates = shot => [getDistanceForShot(), getAngleForShot(shot)];
+  switch (shot) {
+    case STRAIGHT:
+      return randomInRange([max - 5, max]);
+
+    case LEFT_SIDE:
+      return randomInRange([5, max - 3]);
+
+    case RIGHT_SIDE:
+      return randomInRange([3, max - 6]);
+
+    case BACK_SIDE:
+      return randomInRange([0, 6]);
+
+    default:
+      return randomInRange([0, max]);
+  }
+};
+
+const getShotCoordinates = shot => [getDistanceForShot(shot), getAngleForShot(shot)];
 
 const determineOutcome = shot => {
   const coords = getShotCoordinates(shot);
@@ -312,7 +331,10 @@ const chooseShot = () => {
 
 // main functions
 
-const playDelivery = () => determineOutcome(chooseShot());
+const playDelivery = () => {
+  const shot = chooseShot();
+  return determineOutcome(shot);
+};
 
 const game = (mode, target, maxBatsmen) => {
   let currScore = 0;
@@ -355,7 +377,7 @@ const getTarget = mode => {
 const initGame = (mode = 'easy') => {
   const target = getTarget(mode);
   const maxBatsmen = getMaxBatsmen(mode);
-  displayGameInfo(mode, target, maxBatsmen);
+  displayGameInfo(mode, target, 0, 0, maxBatsmen);
   displayGround();
 
   const result = game(mode, target, maxBatsmen);
