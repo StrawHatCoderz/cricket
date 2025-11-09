@@ -38,6 +38,12 @@ const FIELDERS = [
   [-10, 175]
 ];
 
+const USER_SHOT_MENU = 'Choose Your Shot:\n' +
+  'L: Left-side(Leg)\n' +
+  'R: Right-side(Off)\n' +
+  'B: Back Side (Backfoot)\n' +
+  'S: Straight (Frontfoot)\n';
+
 // [width, height, innerRadius, boundaryRadius]
 const GROUND_DIMENSIONS = [25, 25, 6, 11];
 const GROUND_RADIUS = 12;
@@ -315,13 +321,7 @@ const chooseShot = () => {
   const validShots = [LEFT_SIDE, RIGHT_SIDE, BACK_SIDE, STRAIGHT];
 
   while (true) {
-    const shotChoice = prompt(
-      'Choose Your Shot:\n' +
-      'L: Left-side(Leg)\n' +
-      'R: Right-side(Off)\n' +
-      'B: Back Side (Backfoot)\n' +
-      'S: Straight (Frontfoot)\n'
-    );
+    const shotChoice = prompt(USER_SHOT_MENU);
 
     if (isValidShot(shotChoice, validShots)) return shotChoice.toLowerCase();
 
@@ -366,13 +366,13 @@ const getMaxBatsmen = mode => {
   if (mode === 'easy') return 6;
   if (mode === 'medium') return 5;
   return 4;
-}
+};
 
 const getTarget = mode => {
   if (mode === 'easy') return randomInRange([15, 20]);
   if (mode === 'medium') return randomInRange([35, 50]);
   return randomInRange([75, 100]);
-}
+};
 
 const initGame = (mode = 'easy') => {
   const target = getTarget(mode);
@@ -387,6 +387,6 @@ const initGame = (mode = 'easy') => {
 
   if (status === WIN_STATUS) displayWinMessage(maxBatsmen, wicketsLoss);
   else endGame(target, runsScored);
-}
+};
 
 initGame();
